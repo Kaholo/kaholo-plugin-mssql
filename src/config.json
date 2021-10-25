@@ -4,7 +4,7 @@
   "imgUrl": "logo.png",
   "execProgram": "node",
   "main": "app.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Run SQL commands and scripts on Microsoft SQL(MSSQL) server.",
   "category": "DATABASE",
   "keywords": ["database", "db", "sql", "ms", "table", "query", "run"],
@@ -238,7 +238,7 @@
           "viewName": "Table Permission",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "listTablesOrAll",
+          "functionName": "listTablesAuto",
           "description": "Table to give permissions on."
         },
         {
@@ -259,7 +259,7 @@
               "name": "Read And Write"
             },
             {
-              "id": "full",
+              "id": "ALL",
               "name": "Full Access"
             }
           ],
@@ -454,7 +454,7 @@
           "viewName": "Table Permission",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "listTablesOrAll",
+          "functionName": "listTablesAuto",
           "description": "Table to give permissions on."
         },
         {
@@ -475,7 +475,7 @@
               "name": "Read And Write"
             },
             {
-              "id": "full",
+              "id": "ALL",
               "name": "Full Access"
             }
           ],

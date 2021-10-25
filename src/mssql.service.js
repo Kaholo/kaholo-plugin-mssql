@@ -7,6 +7,14 @@ module.exports = class MSSQLService{
         this.conStr = conStr;
     }
 
+    static translatePermissionScope(scope){
+        return  scope == "readWrite" ? "INSERT, DELETE, UPDATE, SELECT" : 
+                scope == "write" ? "INSERT, DELETE, UPDATE" : 
+                scope == "read" ? "SELECT" : 
+                scope == "full" ? "ALL" : 
+                scope
+    }
+
     static async from(params, settings){
         const result = new MSSQLService({
             conStr: params.conStr || settings.conStr
@@ -46,9 +54,11 @@ module.exports = class MSSQLService{
     }
     
     async getTablesLocks({db, table}){
-        const query = `SELECT * FROM sys.dm_tran_locks
-WHERE resource_database_id = DB_ID()${table ? `
-AND resource_associated_entity_id = OBJECT_ID(N'dbo.${table}')` : ""};`
+        if (db === "*") db = undefined;
+        if (table === "*") table = undefined;
+        const query = `SELECT * FROM sys.dm_tran_locks${db ? `
+WHERE resource_database_id = DB_ID()`: ""}${table ? `
+AND resource_associated_entity_id = OBJECT_ID(N'${db}.${table}')` : ""};`
         return this.executeQuery({query, db, getRecordset: true});
     }
     
@@ -137,9 +147,7 @@ CREATE USER ${user} FOR LOGIN ${user};`;
     async grantDbPermissions({user, db, scope, dontClose}){
         if (!scope || !user || !db) throw "Didn't provide one of the required parameters.";
 
-        const query = `GRANT ${scope == "readWrite" ? "INSERT, DELETE, UPDATE, SELECT" : 
-            scope == "write" ? "INSERT, DELETE, UPDATE" : 
-            scope == "read" ? "SELECT" : scope} TO ${user};`;
+        const query = `GRANT ${MSSQLService.translatePermissionScope(scope)} TO ${user};`;
         
         return this.executeQuery({query, db, dontClose});
     }
@@ -147,9 +155,7 @@ CREATE USER ${user} FOR LOGIN ${user};`;
     async grantTablePermissions({user, db, table, scope, dontClose}){
         if (!scope || !user || !db || !table) throw "Didn't provide one of the required parameters.";
         
-        const query = `GRANT ${scope == "readWrite" ? "INSERT, DELETE, UPDATE, SELECT" : 
-            scope == "write" ? "INSERT, DELETE, UPDATE" : 
-            scope == "read" ? "SELECT" : scope } ON ${db}.${table} TO ${user};`;
+        const query = `GRANT ${MSSQLService.translatePermissionScope(scope)} ${MSSQLService.translatePermission} ON ${db}.${table} TO ${user};`;
         
         return this.executeQuery({query, db, dontClose});
     }
