@@ -58,18 +58,21 @@ AND resource_associated_entity_id = OBJECT_ID(N'dbo.${table}')` : ""};`
     }
     
     async getDbSize({db}){
+        if (db === "*") db = undefined;
         const query = `SELECT 
     database_name = DB_NAME(database_id), 
     log_size_mb = CAST(SUM(CASE WHEN type_desc = 'LOG' THEN size END) * 8. / 1024 AS DECIMAL(8,2)), 
     row_size_mb = CAST(SUM(CASE WHEN type_desc = 'ROWS' THEN size END) * 8. / 1024 AS DECIMAL(8,2)), 
     total_size_mb = CAST(SUM(size) * 8. / 1024 AS DECIMAL(8,2))
-FROM sys.master_files WITH(NOWAIT)
-WHERE database_id = DB_ID()
+FROM sys.master_files WITH(NOWAIT)${(db) ? `
+WHERE database_id = DB_ID()` : ""}
 GROUP BY database_id;`;
         return this.executeQuery({query, db, getRecordset: true});
     }
     
     async getTablesSize({db, table}){
+        if (db === "*") db = undefined;
+        if (table === "*") table = undefined;
         const query = `SELECT 
     t.NAME AS table_name,
     s.Name AS database_name,
@@ -88,8 +91,8 @@ INNER JOIN
 LEFT OUTER JOIN 
     sys.schemas s ON t.schema_id = s.schema_id
 WHERE${db ? `
-    s.Name = '${db && db !== "*"}''` : ""}
-    t.NAME ${table && table !== "*" ? `= '${table}'` : "NOT LIKE 'dt%'"} 
+    s.Name = '${db}' AND` : ""}
+    t.NAME ${table ? `= '${table}'` : "NOT LIKE 'dt%'"} 
     AND t.is_ms_shipped = 0
     AND i.OBJECT_ID > 255 
 GROUP BY 
@@ -180,7 +183,8 @@ CREATE USER ${user} FOR LOGIN ${user};`;
     
     async listDbs(){
         const query = `SELECT name FROM sys.databases;`;
-        return this.executeQuery({query, getRecordset: true});
+        const result = [{name: "dbo"}, ...(await this.executeQuery({query, getRecordset: true}))]
+        return result;
     }
     
     async listRoles(){
@@ -194,11 +198,20 @@ CREATE USER ${user} FOR LOGIN ${user};`;
     }
     
     async listTables({db}){
-        const query = `SELECT TABLE_NAME AS name FROM ${db && db !== "*" ? db + "." : ""}INFORMATION_SCHEMA.TABLES 
-WHERE TABLE_TYPE='BASE TABLE'`;
-        const result = await this.executeQuery({query, getRecordset: true});
-        if (result.length == 0 && !db){
-            throw "Must specify a database in connection string or in parameter.";
-        }
+        if (db === "*") db = undefined;
+        const query = `SELECT 
+        t.NAME AS name,
+        s.Name AS database_name
+    FROM 
+        sys.tables t
+    LEFT OUTER JOIN 
+        sys.schemas s ON t.schema_id = s.schema_id${db ? `
+    WHERE
+        s.Name = '${db}'` : ""}
+    GROUP BY
+        t.Name, s.Name
+    ORDER BY
+        t.Name, s.Name;`;
+        return this.executeQuery({query, getRecordset: true});
     }
 }
