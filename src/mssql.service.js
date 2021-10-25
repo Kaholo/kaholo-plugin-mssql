@@ -12,7 +12,7 @@ module.exports = class MSSQLService{
                 scope == "write" ? "INSERT, DELETE, UPDATE" : 
                 scope == "read" ? "SELECT" : 
                 scope == "full" ? "ALL" : 
-                scope
+                scope;
     }
 
     static async from(params, settings){
@@ -33,7 +33,7 @@ module.exports = class MSSQLService{
 
     async executeQuery({query, dontClose, db, getRecordset}){
         if (!query) throw "Must specify SQL query to execute";
-        if (db) query += `USE ${db};\n`;
+        if (db && db !== "*" && db !== "dbo") query += `USE ${db};\n`;
         const result = await this.pool.request().query(query);
         if (!dontClose){
             await this.close();
@@ -155,7 +155,7 @@ CREATE USER ${user} FOR LOGIN ${user};`;
     async grantTablePermissions({user, db, table, scope, dontClose}){
         if (!scope || !user || !db || !table) throw "Didn't provide one of the required parameters.";
         
-        const query = `GRANT ${MSSQLService.translatePermissionScope(scope)} ${MSSQLService.translatePermission} ON ${db}.${table} TO ${user};`;
+        const query = `GRANT ${MSSQLService.translatePermissionScope(scope)} ON ${db}.${table} TO ${user};`;
         
         return this.executeQuery({query, db, dontClose});
     }

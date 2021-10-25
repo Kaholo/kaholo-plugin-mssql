@@ -52,6 +52,7 @@ function listAuto(listFuncName, addAllOption) {
 module.exports = {
   listRolesAuto: listAuto("listRoles"),
   listUsersAuto: listAuto("listUsers"),
+  listTablesAuto: listAuto("listTables"),
   listDatabasesAuto: listAuto("listDbs"),
   listDatabasesOrAll: listAuto("listDbs", true),
   listTablesOrAll: listAuto("listTables", true)
