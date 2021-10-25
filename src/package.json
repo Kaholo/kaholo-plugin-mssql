@@ -1,0 +1,14 @@
+{
+	"name": "kaholo-plugin-mssql",
+	"version": "1.0.0",
+	"description": "Kaholo plugin to execute SQL commands and scripts on Microsoft SQL(MSSQL) server.",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Kaholo Group(Amit Alon)",
+	"license": "ISC",
+	"dependencies": {
+		"mssql": "^7.2.1"
+	}
+}
