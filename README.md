@@ -55,6 +55,7 @@ Return the size in MB of the specified table.
 
 ## Method: Create User
 Create a new user. If provided role, or DB\Table Permission Scope also give the user the specified permissions or add to the specified role.
+Runs everything in one transaction so if one command fails, no effects will take place in the DB.
 
 ## Parameters
 1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
@@ -108,7 +109,8 @@ Grant Table Permissions
 
 
 ## Method: Create Role
-Create a new role in the default database connected from the connection string.
+Create a new role in the connected database. Also grant permmission specified to the role.
+Runs everything in one transaction so if one command fails, no effects will take place in the DB.
 
 ## Parameters
 1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'

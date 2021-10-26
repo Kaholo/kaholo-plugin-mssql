@@ -5,6 +5,7 @@ module.exports = class MSSQLService{
     constructor({conStr}){
         if (!conStr) throw "Must provide a connection string to use to connect to MSSQL.";
         this.conStr = conStr;
+        this.rolledback = false;
     }
 
     static translatePermissionScope(scope){
@@ -26,6 +27,20 @@ module.exports = class MSSQLService{
     async connect(){
         this.pool = await sql.connect(this.conStr);
     }
+
+    async startTransaction(){
+        this.transaction = await new sql.Transaction(this.pool);
+        this.transaction.on('rollback', () => {this.rolledback = true});
+        await this.transaction.begin();
+    }
+    
+    async rollback(){
+        if (!this.rolledback) await this.transaction.rollback();
+    }
+
+    async commitTransaction(){
+        await this.transaction.commit();
+    }
     
     async close(){
         await this.pool.close();
@@ -34,7 +49,8 @@ module.exports = class MSSQLService{
     async executeQuery({query, dontClose, db, getRecordset}){
         if (!query) throw "Must specify SQL query to execute";
         if (db && db !== "*" && db !== "dbo") query += `USE ${db};\n`;
-        const result = await this.pool.request().query(query);
+        const request = this.transaction ? new sql.Request(this.transaction) : this.pool.request();
+        const result = await request.query(query);
         if (!dontClose){
             await this.close();
         }
@@ -116,26 +132,41 @@ ORDER BY
         if (!user || !pass) throw "Didn't provide one of the required parameters.";
         const query = `CREATE LOGIN ${user} WITH PASSWORD = '${pass}';
 CREATE USER ${user} FOR LOGIN ${user};`;
-        const result = {createUser: await this.executeQuery({query, dontClose: true})};
-        if (role){
-            result.addRole = await this.addRoleMember({user, role, dontClose: true});
+        await this.startTransaction();
+        let lastAction = "createUser";
+        try {
+            const result = {createUser: await this.executeQuery({query, dontClose: true})};
+            if (role){
+                lastAction = "addRole";
+                result.addRole = await this.addRoleMember({user, role, dontClose: true});
+            }
+            if (dbScope){
+                lastAction = "grantDbPermissions";
+                result.grantDbPermissions = await this.grantDbPermissions({
+                    user, db, 
+                    scope: dbScope, 
+                    dontClose: true
+                });
+            }
+            if (tableScope){
+                lastAction = "grantTablePermissions";
+                result.grantTablePermissions = await this.grantTablePermissions({
+                    user, db, table, 
+                    scope: tableScope, 
+                    dontClose: true
+                });
+            }
+            lastAction = "commitTransaction";
+            await this.commitTransaction();
+            return result;
         }
-        if (dbScope){
-            result.grantDbPermissions = await this.grantDbPermissions({
-                user, db, 
-                scope: dbScope, 
-                dontClose: true
-            });
+        catch (error) {
+            await this.rollback();
+            throw `Error with '${lastAction}': ${error.message || JSON.stringify(error)}`;
         }
-        if (tableScope){
-            result.grantTablePermissions = await this.grantTablePermissions({
-                user, db, table, 
-                scope: tableScope, 
-                dontClose: true
-            });
+        finally {
+            await this.close();
         }
-        await this.close();
-        return result;
     }
 
     async addRoleMember({user, role, dontClose}){
@@ -163,28 +194,42 @@ CREATE USER ${user} FOR LOGIN ${user};`;
     async createRole({role, db, table, dbScope, tableScope}){
         if (!role) throw "Must specify role to create";
         const query = `CREATE ROLE ${role};`;
-        const result = {createRole: await this.executeQuery({
-            dontClose: true,
-            query
-        })};
-        if (dbScope){
-            result.grantDbPermissions = await this.grantDbPermissions({
-                user: role, 
-                scope: dbScope, 
+        await this.startTransaction();
+        let lastAction = "createRole";
+        try {
+            const result = {createRole: await this.executeQuery({
                 dontClose: true,
-                db
-            });
+                query
+            })};
+            if (dbScope){
+                lastAction = "grantDbPermissions";
+                result.grantDbPermissions = await this.grantDbPermissions({
+                    user: role, 
+                    scope: dbScope, 
+                    dontClose: true,
+                    db
+                });
+            }
+            if (tableScope){
+                lastAction = "grantTablePermissions";
+                result.grantTablePermissions = await this.grantTablePermissions({
+                    user: role, 
+                    scope: tableScope, 
+                    dontClose: true,
+                    db, table
+                });
+            }
+            lastAction = "commitTransaction";
+            await this.commitTransaction();
+            return result;
         }
-        if (tableScope){
-            result.grantTablePermissions = await this.grantTablePermissions({
-                user: role, 
-                scope: tableScope, 
-                dontClose: true,
-                db, table
-            });
+        catch (error) {
+            await this.rollback();
+            throw `Error with '${lastAction}': ${error.message || JSON.stringify(error)}`;
         }
-        await this.close();
-        return result;
+        finally {
+            await this.close();
+        }
     }
     
     async listDbs(){
