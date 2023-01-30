@@ -1,5 +1,7 @@
-# kaholo-plugin-mssql
-Kaholo Plugin for running scripts and queries on Microsoft SQL(MSSQL) server.
+# Kaholo MS SQL Server Plugin
+Microsoft SQL Server is a relational database management system (RDBMS) that supports a wide variety of transaction processing, business intelligence and analytics applications in corporate IT environments.
+
+This plugin extends Kaholo's capability to include running scripts and queries on a Microsoft SQL Server.
 
 ##  Settings
 1. Connection String (Vault) **Required if not in method** - The connection string to use on default to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
