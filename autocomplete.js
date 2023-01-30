@@ -13,9 +13,9 @@ function mapAutoParams(autoParams) {
   return params;
 }
 
-/** *
+/***
  * @returns {[{id, value}]} filtered result items
- ** */
+ ***/
 function handleResult(result, query) {
   if (!result || result.length === 0) {
     return [];
