@@ -1,10 +1,10 @@
 {
-  "name": "MSSQL",
+  "name": "MSSQL-dev",
   "type": "executer",
   "imgUrl": "logo.png",
   "execProgram": "node",
   "main": "app.js",
-  "version": "1.0.4",
+  "version": "1.0.4-dev",
   "description": "Run SQL commands and scripts on Microsoft SQL(MSSQL) server.",
   "category": "DATABASE",
   "keywords": ["database", "db", "sql", "ms", "table", "query", "run"],
