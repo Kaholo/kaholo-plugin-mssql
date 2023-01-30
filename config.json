@@ -1,6 +1,6 @@
 {
   "name": "MSSQL",
-  "viewname": "MS SQL Server",
+  "viewName": "MS SQL Server",
   "type": "executer",
   "imgUrl": "logo.png",
   "execProgram": "node",
