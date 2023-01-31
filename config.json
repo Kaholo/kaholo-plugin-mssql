@@ -1,11 +1,12 @@
 {
   "name": "MSSQL",
+  "viewName": "MS SQL Server",
   "type": "executer",
   "imgUrl": "logo.png",
   "execProgram": "node",
   "main": "app.js",
   "version": "1.0.4",
-  "description": "Run SQL commands and scripts on Microsoft SQL(MSSQL) server.",
+  "description": "Run commands and scripts on Microsoft SQL Server.",
   "category": "DATABASE",
   "keywords": ["database", "db", "sql", "ms", "table", "query", "run"],
   "settings": [
