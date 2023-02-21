@@ -13,7 +13,7 @@
     "authId": "mssqlAccount",
     "params": [
       {
-        "name": "hostname",
+        "name": "host",
         "viewName": "Host",
         "type": "string",
         "required": true

@@ -26,10 +26,10 @@ module.exports = class MSSQLService {
     return scope;
   }
 
-  static async from(params, settings) {
-    const result = new MSSQLService({
-      conStr: params.conStr || settings.conStr,
-    });
+  static async from(params) {
+    const conStr = buildConnectionString(params);
+
+    const result = new MSSQLService({ conStr });
     await result.connect();
     return result;
   }
@@ -329,3 +329,22 @@ CREATE USER ${user} FOR LOGIN ${user};`;
     return this.executeQuery({ query, getRecordset: true });
   }
 };
+
+function buildConnectionString(params) {
+  const userConnectionStringEntries = params.additionalConnectionStringItems || {};
+  const connectionStringEntries = new Map(Object.entries({
+    Server: params.host,
+    "User Id": params.username,
+    ...userConnectionStringEntries,
+  }));
+
+  if (params.password) {
+    connectionStringEntries.set("Password", params.password);
+  }
+
+  const conStr = [...connectionStringEntries.entries()]
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join(";");
+
+  return conStr;
+}
