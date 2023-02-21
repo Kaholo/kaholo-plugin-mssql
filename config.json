@@ -9,27 +9,39 @@
   "description": "Run commands and scripts on Microsoft SQL Server.",
   "category": "DATABASE",
   "keywords": ["database", "db", "sql", "ms", "table", "query", "run"],
-  "settings": [
-    {
-      "name": "conStr",
-      "viewName": "Connection String",
-      "type": "vault",
-      "description": "The connection string to use on default to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-      "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-    }
-  ],
+  "auth": {
+    "authId": "mssqlAccount",
+    "params": [
+      {
+        "name": "hostname",
+        "viewName": "Host",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "username",
+        "viewName": "Username",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "password",
+        "viewName": "Password",
+        "type": "vault"
+      },
+      {
+        "name": "additionalConnectionStringItems",
+        "viewName": "Additional Connection String Items",
+        "type": "text",
+        "parserType": "keyValuePairs"
+      }
+    ]
+  },
   "methods": [
     {
       "name": "executeQuery",
       "viewName": "Execute Query",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "query",
           "viewName": "Query String",
@@ -43,13 +55,6 @@
       "viewName": "Execute SQL File",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "path",
           "viewName": "SQL File Path",
           "type": "string",
@@ -60,27 +65,12 @@
     {
       "name": "testConnectivity",
       "viewName": "Test Connectivity",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "getTablesLocks",
       "viewName": "Get Tables Locks",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
@@ -102,27 +92,12 @@
     {
       "name": "getServerVersion",
       "viewName": "Get Server Version",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "getDbSize",
       "viewName": "Get Databases Size",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
@@ -137,13 +112,6 @@
       "name": "getTablesSize",
       "viewName": "Get Tables Size",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
@@ -166,13 +134,6 @@
       "name": "createUser",
       "viewName": "Create User",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "user",
           "viewName": "Username",
@@ -274,13 +235,6 @@
       "viewName": "Grant Database Permissions",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "user",
           "viewName": "User",
           "type": "autocomplete",
@@ -336,13 +290,6 @@
       "viewName": "Grant Table Permissions",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "user",
           "viewName": "User",
           "type": "autocomplete",
@@ -397,13 +344,6 @@
       "name": "createRole",
       "viewName": "Create Role",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "role",
           "viewName": "Role Name",
@@ -490,13 +430,6 @@
       "viewName": "Add Role Member",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "user",
           "viewName": "User",
           "type": "autocomplete",
@@ -517,53 +450,22 @@
     {
       "name": "listDbs",
       "viewName": "List Databases",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "listRoles",
       "viewName": "List Roles",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "listUsers",
       "viewName": "List Users",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "listTables",
       "viewName": "List Tables",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
