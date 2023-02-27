@@ -1,153 +1,181 @@
-const parsers = require("./parsers");
-const MSSQLService = require("./mssql.service");
-const {
-  listRolesAuto,
-  listUsersAuto,
-  listTablesAuto,
-  listDatabasesAuto,
-  listDatabasesOrAll,
-  listTablesOrAll,
-} = require("./autocomplete");
+const kaholoPluginLibrary = require("@kaholo/plugin-library");
 
-async function executeQuery(action, settings) {
-  const { query } = action.params;
-  const mssql = await MSSQLService.from(action.params, settings);
-  return mssql.executeQuery({
-    query: parsers.string(query),
-  });
+const mssqlService = require("./mssql.service");
+const autocomplete = require("./autocomplete");
+
+async function executeQuery(params) {
+  const { query } = params;
+
+  const mssql = await mssqlService.from(params);
+  return mssql.executeQuery({ query });
 }
 
-async function executeSQLFile(action, settings) {
-  const { path } = action.params;
+async function executeSQLFile(params) {
+  const { path } = params;
 
-  const mssql = await MSSQLService.from(action.params, settings);
-  return mssql.executeSQLFile({
-    path: parsers.path(path),
-  });
+  const mssql = await mssqlService.from(params);
+  return mssql.executeSQLFile({ path });
 }
 
-async function testConnectivity(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
+async function testConnectivity(params) {
+  const mssql = await mssqlService.from(params);
   return mssql.testConnectivity();
 }
 
-async function getTablesLocks(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
+async function getTablesLocks(params) {
+  const {
+    db,
+    table,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
   return mssql.getTablesLocks({
-    db: parsers.autocomplete(action.params.db),
-    table: parsers.autocomplete(action.params.table),
+    db,
+    table,
   });
 }
 
-async function getServerVersion(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
+async function getServerVersion(params) {
+  const mssql = await mssqlService.from(params);
   return mssql.getServerVersion();
 }
 
-async function getDbSize(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
-  return mssql.getDbSize({
-    db: parsers.autocomplete(action.params.db),
-  });
-}
-
-async function getTablesSize(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
-  return mssql.getTablesSize({
-    db: parsers.autocomplete(action.params.db),
-    table: parsers.autocomplete(action.params.table),
-  });
-}
-
-async function createUser(action, settings) {
+async function getDbSize(params) {
   const {
-    user, pass, role, db, table, dbScope, tableScope,
-  } = action.params;
-  const mssql = await MSSQLService.from(action.params, settings);
+    db,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
+  return mssql.getDbSize({ db });
+}
+
+async function getTablesSize(params) {
+  const {
+    db,
+    table,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
+  return mssql.getTablesSize({
+    db,
+    table,
+  });
+}
+
+async function createUser(params) {
+  const {
+    user,
+    pass,
+    role,
+    db,
+    table,
+    dbScope,
+    tableScope,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
   return mssql.createUser({
-    user: parsers.string(user),
-    role: parsers.autocomplete(role),
-    db: parsers.autocomplete(db),
-    table: parsers.autocomplete(table),
+    user,
+    role,
+    db,
+    table,
     pass,
     dbScope,
     tableScope,
   });
 }
 
-async function grantDbPermissions(action, settings) {
+async function grantDbPermissions(params) {
   const {
-    scope, user, db, table, role,
-  } = action.params;
-  const mssql = await MSSQLService.from(action.params, settings);
+    scope,
+    user,
+    db,
+    table,
+    role,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
   return mssql.grantDbPermissions({
-    user: parsers.autocomplete(user),
-    db: parsers.autocomplete(db),
-    table: parsers.autocomplete(table),
-    role: parsers.autocomplete(role),
+    user,
+    db,
+    table,
+    role,
     scope,
   });
 }
 
-async function grantTablePermissions(action, settings) {
+async function grantTablePermissions(params) {
   const {
-    scope, user, table, role,
-  } = action.params;
-  const mssql = await MSSQLService.from(action.params, settings);
+    scope,
+    user,
+    table,
+    role,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
   return mssql.grantTablePermissions({
-    user: parsers.autocomplete(user),
-    table: parsers.autocomplete(table),
-    role: parsers.autocomplete(role),
+    user,
+    table,
+    role,
     scope,
   });
 }
 
-async function createRole(action, settings) {
+async function createRole(params) {
   const {
-    role, db, table, dbScope, tableScope,
-  } = action.params;
-  const mssql = await MSSQLService.from(action.params, settings);
+    role,
+    db,
+    table,
+    dbScope,
+    tableScope,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
   return mssql.createRole({
-    role: parsers.autocomplete(role),
-    db: parsers.autocomplete(db),
-    table: parsers.autocomplete(table),
+    role,
+    db,
+    table,
     dbScope,
     tableScope,
   });
 }
 
-async function addRoleMember(action, settings) {
-  const { role, user } = action.params;
-  const mssql = await MSSQLService.from(action.params, settings);
+async function addRoleMember(params) {
+  const {
+    role,
+    user,
+  } = params;
+
+  const mssql = await mssqlService.from(params);
   return mssql.addRoleMember({
-    role: parsers.autocomplete(role),
-    user: parsers.autocomplete(user),
+    role,
+    user,
   });
 }
 
-async function listDbs(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
+async function listDbs(params) {
+  const mssql = await mssqlService.from(params);
   return mssql.listDbs();
 }
 
-async function listRoles(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
+async function listRoles(params) {
+  const mssql = await mssqlService.from(params);
   return mssql.listRoles();
 }
 
-async function listUsers(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
+async function listUsers(params) {
+  const mssql = await mssqlService.from(params);
   return mssql.listUsers();
 }
 
-async function listTables(action, settings) {
-  const mssql = await MSSQLService.from(action.params, settings);
-  return mssql.listTables({
-    db: parsers.autocomplete(action.params.db),
-  });
+async function listTables(params) {
+  const { db } = params;
+
+  const mssql = await mssqlService.from(params);
+  return mssql.listTables({ db });
 }
 
-module.exports = {
+module.exports = kaholoPluginLibrary.bootstrap({
   executeQuery,
   executeSQLFile,
   testConnectivity,
@@ -164,10 +192,4 @@ module.exports = {
   listRoles,
   listUsers,
   listTables,
-  listRolesAuto,
-  listUsersAuto,
-  listTablesAuto,
-  listDatabasesAuto,
-  listDatabasesOrAll,
-  listTablesOrAll,
-};
+}, autocomplete);
