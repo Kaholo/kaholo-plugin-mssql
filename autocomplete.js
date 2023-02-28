@@ -1,4 +1,4 @@
-const MSSQLService = require("./mssql.service");
+const MSSQLService = require("./mssql-client");
 
 // auto complete helper methods
 
