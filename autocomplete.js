@@ -12,7 +12,7 @@ function createAutocompleteMethod(
     }
 
     return items;
-  });
+  }, 1);
 }
 
 function mapResultToAutocompleteItems(result, query) {

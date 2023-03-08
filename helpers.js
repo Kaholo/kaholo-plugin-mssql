@@ -1,9 +1,9 @@
 const fs = require("fs");
 const MSSQLClient = require("./mssql-client");
 
-function injectMSSQLClient(funcToInject) {
+function injectMSSQLClient(funcToInject, paramsArgPosition = 0) {
   return async (...args) => {
-    const mssqlClient = await MSSQLClient.from(args[0]);
+    const mssqlClient = await MSSQLClient.from(args[paramsArgPosition]);
     return funcToInject(mssqlClient, ...args);
   };
 }
