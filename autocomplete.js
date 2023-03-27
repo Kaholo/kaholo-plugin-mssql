@@ -1,69 +1,52 @@
-const parsers = require("./parsers");
-const MSSQLService = require("./mssql.service");
+const { injectMSSQLClient } = require("./helpers");
 
-// auto complete helper methods
+function createAutocompleteMethod(
+  clientMethodName,
+  addAllOption = false,
+) {
+  return injectMSSQLClient(async (client, query, params) => {
+    const result = await client[clientMethodName]?.call?.(client, params);
+    const items = mapResultToAutocompleteItems(result, query);
+    if (addAllOption) {
+      items.unshift({ id: "*", value: "All" });
+    }
 
-const MAX_RESULTS = 10;
-
-function mapAutoParams(autoParams) {
-  const params = {};
-  autoParams.forEach((param) => {
-    params[param.name] = parsers.autocomplete(param.value);
-  });
-  return params;
+    return items;
+  }, 1);
 }
 
-/***
- * @returns {[{id, value}]} filtered result items
- ***/
-function handleResult(result, query) {
+function mapResultToAutocompleteItems(result, query) {
   if (!result || result.length === 0) {
     return [];
   }
-  const items = result.map((item) => getAutoResult(item.name));
-  return filterItems(items, query);
-}
 
-function getAutoResult(id, value) {
-  return {
-    id: id || value,
-    value: value || id,
-  };
+  const mappedItems = result.map((item) => ({
+    id: item.name,
+    value: item.name,
+  }));
+
+  return filterItems(mappedItems, query);
 }
 
 function filterItems(items, query) {
-  let sortedItems = items;
-  if (query) {
-    // split by '.' or ' ' and make lower case
-    const qWords = query.split(/[. ]/g).map((word) => word.toLowerCase());
-    const filteredItems = items.filter(
-      (item) => qWords.every((word) => item.value.toLowerCase().includes(word)),
-    );
-    sortedItems = filteredItems.sort(
-      (word1, word2) => word1.value.toLowerCase().indexOf(
-        qWords[0],
-      ) - word2.value.toLowerCase().indexOf(qWords[0]),
-    );
+  if (!query) {
+    return items;
   }
-  return sortedItems.splice(0, MAX_RESULTS);
-}
 
-function listAuto(listFuncName, addAllOption) {
-  return async (query, pluginSettings, triggerParameters) => {
-    const settings = mapAutoParams(pluginSettings); const
-      params = mapAutoParams(triggerParameters);
-    const client = await MSSQLService.from(params, settings);
-    const result = await client[listFuncName](params);
-    const items = handleResult(result, query);
-    return addAllOption ? [{ id: "*", value: "All" }, ...items] : items;
-  };
+  const lowerCaseQuery = query.toLowerCase();
+  const sortedItems = items.filter((item) => (
+    item.id.toLowerCase().includes(lowerCaseQuery)
+    || item.name.toLowerCase().includes(lowerCaseQuery)
+  ));
+
+  return sortedItems;
 }
 
 module.exports = {
-  listRolesAuto: listAuto("listRoles"),
-  listUsersAuto: listAuto("listUsers"),
-  listTablesAuto: listAuto("listTables"),
-  listDatabasesAuto: listAuto("listDbs"),
-  listDatabasesOrAll: listAuto("listDbs", true),
-  listTablesOrAll: listAuto("listTables", true),
+  listRolesAuto: createAutocompleteMethod("listRoles"),
+  listUsersAuto: createAutocompleteMethod("listUsers"),
+  listTablesAuto: createAutocompleteMethod("listTables"),
+  listDatabasesAuto: createAutocompleteMethod("listDbs"),
+  listDatabasesOrAll: createAutocompleteMethod("listDbs", true),
+  listTablesOrAll: createAutocompleteMethod("listTables", true),
 };

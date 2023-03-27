@@ -9,32 +9,45 @@
   "description": "Run commands and scripts on Microsoft SQL Server.",
   "category": "DATABASE",
   "keywords": ["database", "db", "sql", "ms", "table", "query", "run"],
-  "settings": [
-    {
-      "name": "conStr",
-      "viewName": "Connection String",
-      "type": "vault",
-      "description": "The connection string to use on default to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-      "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-    }
-  ],
+  "auth": {
+    "authId": "mssqlAccount",
+    "params": [
+      {
+        "name": "host",
+        "viewName": "Host",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "username",
+        "viewName": "Username",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "password",
+        "viewName": "Password",
+        "type": "vault"
+      },
+      {
+        "name": "additionalConnectionStringItems",
+        "viewName": "Additional Connection String Items",
+        "type": "text",
+        "parserType": "keyValuePairs"
+      }
+    ]
+  },
   "methods": [
     {
       "name": "executeQuery",
       "viewName": "Execute Query",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "query",
           "viewName": "Query String",
           "type": "text",
-          "description": "The SQL query to execute."
+          "description": "The SQL query to execute.",
+          "required": true
         }
       ]
     },
@@ -43,44 +56,23 @@
       "viewName": "Execute SQL File",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "path",
           "viewName": "SQL File Path",
           "type": "string",
-          "description": "The path on the agent, of the file containing the SQL script to execute."
+          "description": "The path on the agent, of the file containing the SQL script to execute.",
+          "required": true
         }
       ]
     },
     {
       "name": "testConnectivity",
       "viewName": "Test Connectivity",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "getTablesLocks",
       "viewName": "Get Tables Locks",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
@@ -102,27 +94,12 @@
     {
       "name": "getServerVersion",
       "viewName": "Get Server Version",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "getDbSize",
       "viewName": "Get Databases Size",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
@@ -137,13 +114,6 @@
       "name": "getTablesSize",
       "viewName": "Get Tables Size",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
@@ -167,23 +137,18 @@
       "viewName": "Create User",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "user",
           "viewName": "Username",
           "type": "string",
-          "description": "The username to identify the new user by."
+          "description": "The username to identify the new user by.",
+          "required": true
         },
         {
           "name": "pass",
           "viewName": "Password",
           "type": "vault",
-          "description": "The password for the new user."
+          "description": "The password for the new user.",
+          "required": true
         },
         {
           "name": "role",
@@ -191,7 +156,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRolesAuto",
-          "description": "If specified assign the specified role to the new user."
+          "description": "If specified assign the specified role to the new user.",
+          "required": true
         },
         {
           "name": "db",
@@ -199,7 +165,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "Database to give permissions on."
+          "description": "Database to give permissions on.",
+          "required": true
         },
         {
           "name": "dbScope",
@@ -207,15 +174,15 @@
           "type": "options",
           "options": [
             {
-              "id": "read",
+              "id": "READ",
               "name": "Read Only"
             },
             {
-              "id": "write",
+              "id": "WRITE",
               "name": "Write/Update Only"
             },
             {
-              "id": "readWrite",
+              "id": "READ_WRITE",
               "name": "Read And Write"
             },
             {
@@ -227,12 +194,13 @@
               "name": "Alter"
             },
             {
-              "id": "ALL",
+              "id": "FULL",
               "name": "Full Access"
             }
           ],
           "description": "If specified grant the new user the specified scope of permissions in the above database.",
-          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks"
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
         },
         {
           "name": "table",
@@ -240,7 +208,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listTablesAuto",
-          "description": "Table to give permissions on."
+          "description": "Table to give permissions on.",
+          "required": true
         },
         {
           "name": "tableScope",
@@ -248,24 +217,25 @@
           "type": "options",
           "options": [
             {
-              "id": "read",
+              "id": "READ",
               "name": "Read Only"
             },
             {
-              "id": "write",
+              "id": "WRITE",
               "name": "Write(Insert/Update/Delete) Only"
             },
             {
-              "id": "readWrite",
+              "id": "READ_WRITE",
               "name": "Read And Write"
             },
             {
-              "id": "ALL",
+              "id": "FULL",
               "name": "Full Access"
             }
           ],
           "description": "If specified grant the new user the specified scope of permissions in the above table.",
-          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks"
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
         }
       ]
     },
@@ -274,19 +244,13 @@
       "viewName": "Grant Database Permissions",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "user",
           "viewName": "User",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listUsersAuto",
-          "description": "The user to grant permission to"
+          "description": "The user to grant permission to",
+          "required": true
         },
         {
           "name": "db",
@@ -294,7 +258,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "The database to give permmision on."
+          "description": "The database to give permmision on.",
+          "required": true
         },
         {
           "name": "scope",
@@ -302,15 +267,15 @@
           "type": "options",
           "options": [
             {
-              "id": "read",
+              "id": "READ",
               "name": "Read Only"
             },
             {
-              "id": "write",
+              "id": "WRITE",
               "name": "Write/Update Only"
             },
             {
-              "id": "readWrite",
+              "id": "READ_WRITE",
               "name": "Read And Write"
             },
             {
@@ -322,12 +287,13 @@
               "name": "Alter"
             },
             {
-              "id": "ALL",
+              "id": "FULL",
               "name": "Full Access"
             }
           ],
           "description": "The scope of the permissions to give to the user.",
-          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks"
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
         }
       ]
     },
@@ -336,19 +302,13 @@
       "viewName": "Grant Table Permissions",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "user",
           "viewName": "User",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listUsersAuto",
-          "description": "The user to grant permission to"
+          "description": "The user to grant permission to",
+          "required": true
         },
         {
           "name": "db",
@@ -356,7 +316,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "The database to select the table from."
+          "description": "The database to select the table from.",
+          "required": true
         },
         {
           "name": "table",
@@ -364,7 +325,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listTablesAuto",
-          "description": "The table to give permission on."
+          "description": "The table to give permission on.",
+          "required": true
         },
         {
           "name": "scope",
@@ -372,24 +334,25 @@
           "type": "options",
           "options": [
             {
-              "id": "read",
+              "id": "READ",
               "name": "Read Only"
             },
             {
-              "id": "write",
+              "id": "WRITE",
               "name": "Write/Update Only"
             },
             {
-              "id": "readWrite",
+              "id": "READ_WRITE",
               "name": "Read And Write"
             },
             {
-              "id": "ALL",
+              "id": "FULL",
               "name": "Full Access"
             }
           ],
           "description": "The scope of the permissions to give to the user.",
-          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks"
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
         }
       ]
     },
@@ -398,16 +361,10 @@
       "viewName": "Create Role",
       "params": [
         {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
-        {
           "name": "role",
           "viewName": "Role Name",
-          "type": "string"
+          "type": "string",
+          "required": true
         },
         {
           "name": "db",
@@ -423,15 +380,15 @@
           "type": "options",
           "options": [
             {
-              "id": "read",
+              "id": "READ",
               "name": "Read Only"
             },
             {
-              "id": "write",
+              "id": "WRITE",
               "name": "Write/Update Only"
             },
             {
-              "id": "readWrite",
+              "id": "READ_WRITE",
               "name": "Read And Write"
             },
             {
@@ -443,7 +400,7 @@
               "name": "Alter"
             },
             {
-              "id": "ALL",
+              "id": "FULL",
               "name": "Full Access"
             }
           ],
@@ -464,19 +421,19 @@
           "type": "options",
           "options": [
             {
-              "id": "read",
+              "id": "READ",
               "name": "Read Only"
             },
             {
-              "id": "write",
+              "id": "WRITE",
               "name": "Write(Insert/Update/Delete) Only"
             },
             {
-              "id": "readWrite",
+              "id": "READ_WRITE",
               "name": "Read And Write"
             },
             {
-              "id": "ALL",
+              "id": "FULL",
               "name": "Full Access"
             }
           ],
@@ -489,13 +446,6 @@
       "name": "addRoleMember",
       "viewName": "Add Role Member",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "user",
           "viewName": "User",
@@ -517,53 +467,22 @@
     {
       "name": "listDbs",
       "viewName": "List Databases",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "listRoles",
       "viewName": "List Roles",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "listUsers",
       "viewName": "List Users",
-      "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        }
-      ]
+      "params": []
     },
     {
       "name": "listTables",
       "viewName": "List Tables",
       "params": [
-        {
-          "name": "conStr",
-          "viewName": "Connection String",
-          "type": "vault",
-          "description": "The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'",
-          "learnUrl": "https://www.connectionstrings.com/microsoft-data-sqlclient/"
-        },
         {
           "name": "db",
           "viewName": "Database",
