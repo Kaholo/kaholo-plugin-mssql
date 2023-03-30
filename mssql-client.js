@@ -354,7 +354,7 @@ class MSSQLClient {
 
     const query = prepareListTablesQuery({ db });
 
-    return this.executeQuery({ query, getRecordSet: true });
+    return this.executeQuery({ query });
   }
 }
 
