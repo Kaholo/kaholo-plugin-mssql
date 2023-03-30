@@ -98,24 +98,20 @@ function prepareListTablesQuery(params) {
   const { db } = params;
 
   let query = `
-SELECT 
-    t.NAME AS name,
-    s.Name AS database_name
-FROM 
-    sys.tables t
-LEFT OUTER JOIN 
-    sys.schemas s ON t.schema_id = s.schema_id`;
+SELECT
+  t.NAME AS name,
+  s.Name AS database_name
+FROM
+  sys.tables t
+LEFT OUTER JOIN
+  sys.schemas s ON t.schema_id = s.schema_id`;
 
   if (db && db !== "*") {
     query += `
-WHERE s.Name = '${db}'`;
+WHERE s.Name='${db}'`;
   }
 
-  query += `
-GROUP BY
-    t.Name, s.Name
-ORDER BY
-    t.Name, s.Name;`;
+  query += ";";
 
   return query;
 }

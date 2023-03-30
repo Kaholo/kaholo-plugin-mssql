@@ -6,6 +6,7 @@ function createAutocompleteMethod(
 ) {
   return injectMSSQLClient(async (client, query, params) => {
     const result = await client[clientMethodName]?.call?.(client, params);
+
     const items = mapResultToAutocompleteItems(result, query);
     if (addAllOption) {
       items.unshift({ id: "*", value: "All" });

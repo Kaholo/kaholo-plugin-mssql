@@ -5,7 +5,7 @@
   "imgUrl": "logo.png",
   "execProgram": "node",
   "main": "app.js",
-  "version": "1.0.4",
+  "version": "1.0.4-KP-1101",
   "description": "Run commands and scripts on Microsoft SQL Server.",
   "category": "DATABASE",
   "keywords": ["database", "db", "sql", "ms", "table", "query", "run"],

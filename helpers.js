@@ -1,9 +1,17 @@
+const kaholoPluginLibrary = require("@kaholo/plugin-library");
 const fs = require("fs");
 const MSSQLClient = require("./mssql-client");
 
 function injectMSSQLClient(funcToInject, paramsArgPosition = 0) {
   return async (...args) => {
-    const mssqlClient = await MSSQLClient.from(args[paramsArgPosition]);
+    const mssqlParams = args[paramsArgPosition];
+    if (typeof mssqlParams.additionalConnectionStringItems === "string") {
+      mssqlParams.additionalConnectionStringItems = kaholoPluginLibrary.parsers.keyValuePairs(
+        mssqlParams.additionalConnectionStringItems,
+      );
+    }
+
+    const mssqlClient = await MSSQLClient.from(mssqlParams);
     return funcToInject(mssqlClient, ...args);
   };
 }
