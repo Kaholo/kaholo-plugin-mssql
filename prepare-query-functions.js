@@ -96,23 +96,14 @@ ORDER BY
 
 function prepareListTablesQuery(params) {
   const { db } = params;
-
-  let query = `
-SELECT
-  t.NAME AS name,
-  s.Name AS database_name
-FROM
-  sys.tables t
-LEFT OUTER JOIN
-  sys.schemas s ON t.schema_id = s.schema_id`;
+  const querySegments = [];
 
   if (db && db !== "*") {
-    query += `
-WHERE s.Name='${db}'`;
+    querySegments.push(`USE ${db};`);
   }
+  querySegments.push(`SELECT t.NAME as name, '${db}' as database_name FROM sys.tables t;`);
 
-  query += ";";
-
+  const query = querySegments.join("\n");
   return query;
 }
 
