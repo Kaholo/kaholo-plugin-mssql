@@ -1,4 +1,3 @@
-const kaholoPluginLibrary = require("@kaholo/plugin-library");
 const fs = require("fs");
 const MSSQLClient = require("./mssql-client");
 
