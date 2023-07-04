@@ -11,7 +11,7 @@ function buildConnectionString(params) {
   }
 
   const conStr = [...connectionStringEntries.entries()]
-    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .map(([key, value]) => `${key}=${value}`)
     .join(";");
 
   return conStr;
