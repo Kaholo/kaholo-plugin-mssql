@@ -1,14 +1,26 @@
 {
   "name": "MSSQL",
-  "viewName": "MS SQL Server",
+  "viewName": "Microsoft SQL Server",
   "type": "executer",
   "imgUrl": "logo.png",
   "execProgram": "node",
   "main": "app.js",
   "version": "1.0.4",
-  "description": "Run commands and scripts on Microsoft SQL Server.",
-  "category": "DATABASE",
-  "keywords": ["database", "db", "sql", "ms", "table", "query", "run"],
+  "description": "Microsoft-developed relational database management system",
+  "category": "Database",
+  "keywords": [
+    "relational",
+    "database",
+    "rdbms",
+    "db",
+    "sql",
+    "t-sql",
+    "transact-sql",
+    "mssql",
+    "microsoft",
+    "table",
+    "query"
+  ],
   "auth": {
     "authId": "mssqlAccount",
     "params": [
@@ -16,24 +28,31 @@
         "name": "host",
         "viewName": "Host",
         "type": "string",
-        "required": true
+        "description": "Hostname or IP address of the Microsoft SQL Server",
+        "required": true,
+        "placeholder": "mssql1.msdevnet.org"
       },
       {
         "name": "username",
         "viewName": "Username",
+        "description": "to authenticate with Microsoft SQL Server",
         "type": "string",
-        "required": true
+        "required": true,
+        "placeholder": "DOMAIN\\username"
       },
       {
         "name": "password",
         "viewName": "Password",
+        "description": "to authenticate with Microsoft SQL Server",
         "type": "vault"
       },
       {
         "name": "additionalConnectionStringItems",
         "viewName": "Additional Connection String Items",
         "type": "text",
-        "parserType": "keyValuePairs"
+        "description": "in key=value format, one per line",
+        "parserType": "keyValuePairs",
+        "placeholder": "Database=kaholo\nTrustServerCertificate=True"
       }
     ]
   },
@@ -46,8 +65,9 @@
           "name": "query",
           "viewName": "Query String",
           "type": "text",
-          "description": "The SQL query to execute.",
-          "required": true
+          "description": "The SQL query to execute",
+          "required": true,
+          "placeholder": "SELECT * FROM records;"
         }
       ]
     },
@@ -59,7 +79,7 @@
           "name": "path",
           "viewName": "SQL File Path",
           "type": "string",
-          "description": "The path on the agent, of the file containing the SQL script to execute.",
+          "description": "The path on the Kaholo agent of a file containing the SQL script to execute",
           "required": true
         }
       ]
@@ -71,7 +91,7 @@
     },
     {
       "name": "getTablesLocks",
-      "viewName": "Get Tables Locks",
+      "viewName": "Get Table Locks",
       "params": [
         {
           "name": "db",
@@ -79,7 +99,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesOrAll",
-          "description": "If specified, return information only on tables from this database."
+          "description": "The database from which to get table locks"
         },
         {
           "name": "table",
@@ -87,7 +107,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listTablesOrAll",
-          "description": "If specified, return information only on the specified table."
+          "description": "If specified, the table for which to get table locks"
         }
       ]
     },
@@ -98,7 +118,7 @@
     },
     {
       "name": "getDbSize",
-      "viewName": "Get Databases Size",
+      "viewName": "Get Database Size",
       "params": [
         {
           "name": "db",
@@ -106,7 +126,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesOrAll",
-          "description": "If specified, return only the size of the specified database."
+          "description": "The database of which to get database size"
         }
       ]
     },
@@ -120,7 +140,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesOrAll",
-          "description": "If specified, return information only on tables from this database."
+          "description": "If specified, the database from which to get the size of tables"
         },
         {
           "name": "table",
@@ -128,7 +148,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listTablesOrAll",
-          "description": "If specified, return information only on this table."
+          "description": "If specified, table of which to get table size"
         }
       ]
     },
@@ -140,14 +160,14 @@
           "name": "user",
           "viewName": "Username",
           "type": "string",
-          "description": "The username to identify the new user by.",
+          "description": "A username to identify the new user",
           "required": true
         },
         {
           "name": "pass",
           "viewName": "Password",
           "type": "vault",
-          "description": "The password for the new user.",
+          "description": "A password for the new user",
           "required": true
         },
         {
@@ -156,16 +176,16 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRolesAuto",
-          "description": "If specified assign the specified role to the new user.",
+          "description": "A role, if specified, to assign the new user",
           "required": true
         },
         {
           "name": "db",
-          "viewName": "DB Permission",
+          "viewName": "Database",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "Database to give permissions on.",
+          "description": "The database on which to give the new user permissions",
           "required": true
         },
         {
@@ -198,17 +218,17 @@
               "name": "Full Access"
             }
           ],
-          "description": "If specified grant the new user the specified scope of permissions in the above database.",
+          "description": "If specified grant the new user the selected scope of permissions in the specified database.",
           "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks",
           "required": true
         },
         {
           "name": "table",
-          "viewName": "Table Permission",
+          "viewName": "Table",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listTablesAuto",
-          "description": "Table to give permissions on.",
+          "description": "If specified, the table on which to give the new user permissions",
           "required": true
         },
         {
@@ -233,7 +253,7 @@
               "name": "Full Access"
             }
           ],
-          "description": "If specified grant the new user the specified scope of permissions in the above table.",
+          "description": "If specified grant the new user the selected scope of permissions in the specified table.",
           "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks",
           "required": true
         }
@@ -249,16 +269,16 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listUsersAuto",
-          "description": "The user to grant permission to",
+          "description": "The user to which to grant permissions",
           "required": true
         },
         {
           "name": "db",
-          "viewName": "DB",
+          "viewName": "Database",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "The database to give permmision on.",
+          "description": "The database in which to grant permissions",
           "required": true
         },
         {
@@ -291,7 +311,7 @@
               "name": "Full Access"
             }
           ],
-          "description": "The scope of the permissions to give to the user.",
+          "description": "The scope of the permissions to grant the user in the database",
           "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks",
           "required": true
         }
@@ -307,16 +327,16 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listUsersAuto",
-          "description": "The user to grant permission to",
+          "description": "The user to which to grant permissions",
           "required": true
         },
         {
           "name": "db",
-          "viewName": "DB",
+          "viewName": "Database",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "The database to select the table from.",
+          "description": "The database to which the table belongs",
           "required": true
         },
         {
@@ -325,7 +345,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listTablesAuto",
-          "description": "The table to give permission on.",
+          "description": "The table to which to grant the user permissions",
           "required": true
         },
         {
@@ -350,7 +370,7 @@
               "name": "Full Access"
             }
           ],
-          "description": "The scope of the permissions to give to the user.",
+          "description": "The scope of the permissions to grant to the user",
           "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks",
           "required": true
         }
@@ -364,15 +384,16 @@
           "name": "role",
           "viewName": "Role Name",
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "A name for the new role to be created"
         },
         {
           "name": "db",
-          "viewName": "DB Permission",
+          "viewName": "Database",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "Database to give permissions on."
+          "description": "The database on which the new role grants permissions"
         },
         {
           "name": "dbScope",
@@ -404,16 +425,16 @@
               "name": "Full Access"
             }
           ],
-          "description": "If specified grant the new role the specified scope of permissions in the above database.",
+          "description": "If specified grant the new role the selected scope of permissions in the specified database.",
           "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks"
         },
         {
           "name": "table",
-          "viewName": "Table Permission",
+          "viewName": "Table",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listTablesAuto",
-          "description": "Table to give permissions on."
+          "description": "If specified, the table to which to grant the role permissions"
         },
         {
           "name": "tableScope",
@@ -437,7 +458,7 @@
               "name": "Full Access"
             }
           ],
-          "description": "If specified grant the new role the specified scope of permissions in the above table.",
+          "description": "If specified, grant the new role the selected scope of permissions in the specified table.",
           "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks"
         }
       ]
@@ -460,7 +481,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRolesAuto",
-          "description": "The role to add a member to. Will grant the user all the permissions this role has."
+          "description": "The role to which the user will be added"
         }
       ]
     },
@@ -489,7 +510,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesOrAll",
-          "description": "The database to list its tables"
+          "description": "The database for which all tables will be listed"
         }
       ]
     }
