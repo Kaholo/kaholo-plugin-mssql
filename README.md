@@ -1,164 +1,193 @@
-# kaholo-plugin-mssql
-Kaholo Plugin for running scripts and queries on Microsoft SQL(MSSQL) server.
+# Kaholo MS SQL Server Plugin
+Microsoft SQL Server is a relational database management system (RDBMS) that supports a wide variety of transaction processing, business intelligence and analytics applications in corporate IT environments.
 
-##  Settings
-1. Connection String (Vault) **Required if not in method** - The connection string to use on default to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
+This plugin extends Kaholo's capability to include running scripts and queries on a Microsoft SQL Server.
+
+## Plugin Account
+Plugin Settings and Accounts are accessed in Kaholo by clicking on Settings | Plugins, and then clicking on the name of the plugin, which is a blue hyperlink. The Microsoft SQL Server plugin has no settings, but uses Kaholo Accounts to manage the connection string and password. This is for convenience and security. Once a default account is configured all new plugin actions will automatically inherit its parameters, so the same authentication details are pre-configured for each action of the plugin. If multiple accounts are configured, at the Action level parameter Account is a drop-down list of accounts from which to select. At least one account must be created to use the plugin.
+
+The plugin account can also be created at the Action level by selecting "Add New Plugin Account" from the drop-down menu for parameter "Account". The Account parameter appears only after selecting a method that requires the account.
+
+### Account Parameter: Host
+The hostname or IP address of the Microsoft SQL Server. If using hostname, it must be resolvable from the Kaholo agent, e.g. via DNS or by adding it to /etc/hosts on the agent using the [Text Editor plugin](https://github.com/Kaholo/kaholo-plugin-text-editor).
+
+### Account Parameter: Username
+The username for authentication with the Microsoft SQL Server. For SQL Server Authentication this is a simple user name. For Windows Authentication use the format `<domainName>\<loginName>`, for example myuser@kaholo.io my use `KAHOLO\myuser` as user name.
+
+### Account Parameter: Password
+The password that is associated with the user name specified. To prevent exposure of the password in the user interface, logs, error messages and such, the password is stored in the Kaholo Vault. This may be done in Settings | Vault before creating an account or by using the "Add New Vault Item" in the drop-down for this parameter while creating a new plugin account.
+
+### Account Parameter: Additional Connection String Items
+The other parameters will be combined by the plugin into a SQL Server connection string, for example:
+
+    Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;
+
+Often it is necessary to include additional connection items in the connection string, for example if the TLS certificate of the server cannot be verified because it is only a temporary test system with a self-signed certificate, it may be necessary to add `TrustServerCertificate=true`. To select a specific database as part of the connection string, one might use `Database=mydatabase`. These additional connection string items can be provided here one-per-line without semicolons, e.g.:
+
+    TrustServerCertificate=true
+    Database=mydatabase
 
 ## Method: Execute Query
-Execute an sql query on the connected SQL server.
+Executes an SQL/T-SQL query on the connected SQL server.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. Query String (Text) **Required** - The SQL query to execute.
+### Parameter: Query String
+The SQL/T-SQL query to execute.
 
 ## Method: Execute SQL File
-Execute an sql script from a file on the agent.
+Executes an SQL/T-SQL query text file. The file must be on the Kaholo agent's file system. This is normally accomplished by use of the [Git Plugin](https://github.com/Kaholo/kaholo-plugin-git) by cloning a repository or it may be written to the agent using the [Text Editor Plugin](https://github.com/Kaholo/kaholo-plugin-text-editor), or as output of an upstream action in the pipeline.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. SQL File Path (String) **Required** - The path on the agent, of the file containing the SQL script to execute.
+### Parameter: SQL File Path
+The path to the file, either relative or absolute on the Kaholo agent. Relative paths are from the default working directory on the Kaholo agent, for example `/twiddlebug/workspace`.
 
 ## Method: Test Connectivity
-Test if can connect to the MSSQL server provided in the connection string.
+This method has no parameters and simply establishes a connection with the SQL Server as a test that the Kaholo Plugin Account is correctly configured and the SQL Server is accessible on the network.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'.
+## Method: Get Table Locks
+Gets information about locks on tables. Locks are put on tables to prevent concurrent use by different transactions. Use this method to discover which locks exist and get information about the processes that created them. By default the method gets all locks from a database.
 
-## Method: Get Tables Locks
-Get all current locks on the specified table.
+### Parameter: Database
+If a database is already specified as part of the Additional Connection String Items in the Kaholo Plugin Account, this parameter may be left empty. Otherwise, select a database from which to get table locks.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. Database (Autocomplete) **Optional** - If specified, return information only on tables from this database.
-3. Table (Autocomplete) **Optional** - If specified, return information only on the specified table.
+### Parameter: Table
+Select a specific table to get locks only on that table. Otherwise select "All" or leave unconfigured to get all table locks in the database.
 
 ## Method: Get Server Version
-Return the version of the connected MSSQL server.
+This method returns the version information of the server to which it connects. There are no configurable parameters for this method beyond the Kaholo Plugin Account, which forms the basis for the connection string.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
+## Method: Get Database Size
+Gets the size in MB of database(s). If no database is selected the size of all databases is retrieved.
 
-## Method: Get Databases Size
-Return the size in MB of the specified database.
+### Parameter: Database
+To get the size of only the specified database, select a database using the drop-down autocomplete. To get the size of all databases in the server, select "All" or leave this parameter unconfigured.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. Database (Autocomplete) **Optional** - If specified, return only the size of the specified database.
+## Method: Get Table Size
+Gets the size in MB of table(s) in a database.
 
-## Method: Get Tables Size
-Return the size in MB of the specified table.
+### Parameter: Database
+Select the database from which to get table sizes.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. Database (Autocomplete) **Optional** - If specified, return information only on tables from this database.
-3. Table (Autocomplete) **Optional** - If specified, return information only on this table.
+### Parameter: Table
+To get the size of only the specified table, select a table using the drop-down autocomplete. To get the size of all tables in the database, select "All" or leave this parameter unconfigured.
 
 ## Method: Create User
-Create a new user. If provided role, or DB\Table Permission Scope also give the user the specified permissions or add to the specified role.
-Runs everything in one transaction so if one command fails, no effects will take place in the DB.
+Creates a new User account. If provided a role or DB\Table Permission Scope, the method also give the user the specified permissions and role. The method runs as a single transaction so if any part fails, no changes take effect.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. Username (String) **Required** - The username to identify the new user by.
-3. Password (Vault) **Required** - The password for the new user.
-4. Role (Autocomplete) **Optional** - If specified assign the specified role to the new user.
-5. DB Permission (Autocomplete) **Optional** - Database to give permissions on.
-6. Database Permission Scope (Options) **Optional** - If specified grant the new user the specified scope of permissions in the above database. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
-* Read Only - Can run SELECT command
-* Write/Update Only - Can run INSERT/UPDATE/DELETE commands.
-* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE commands.
-* Control - Can run commands to control all data inside existing tables.
-* Alter - Can run all previous commands and all commands to alter the schema of the database, as in create new tables, editing existing tables and more.
-* Full Access - Can run all possible commands on the specified database.
-7. Table Permission (Autocomplete) **Optional** - Table to give permissions on.
-8. Table Permission Scope (Options) **Optional** - If specified grant the new user the specified scope of permissions in the above table. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
-* Read Only - Can run SELECT command
-* Write/Update Only - Can run INSERT/UPDATE/DELETE commands.
-* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE commands.
-* Full Access - Can run all possible commands on the specified table.
+### Parameter: Username
+The name of the user to create.
+
+### Parameter: Password
+A password for the new user. The password must first be entered as an item in the Kaholo Vault to protect it from exposure in the user interface, activity log, error messages, etc.
+
+### Parameter: Role
+The role to assign the new user. Use the autocomplete to select from among the available roles.
+
+### Parameter: Database
+The database on which to grant permissions. Use the autocomplete to select a database.
+
+### Parameter: Database Permission Scope
+If specified grant the new user this scope of permissions in the database. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
+* Read Only - Can run only SELECT queries.
+* Write/Update Only - Can run INSERT/UPDATE/DELETE queries.
+* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE queries.
+* Control - Can run queries to control all data inside existing tables.
+* Alter - Can run all previous queries and those that alter the schema of the database.
+* Full Access - Can run all queries on the specified database.
+
+### Parameter: Table
+If specified, a table on which to grant permissions. Use the autocomplete to select a table.
+
+### Parameter: Table Permission Scope
+If specified grant the new user this scope of permissions in the table. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
+* Read Only - Can run SELECT queries.
+* Write/Update Only - Can run INSERT/UPDATE/DELETE queries.
+* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE queries.
+* Full Access - Can run all queries on the specified table.
 
 ## Method: Grant Database Permissions
-Grant Permission to the specified user on the specified database.
+Grant specified permissions to an existing user over an existing database.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. User (Autocomplete) **Required** - The user to grant permission to
-3. DB (Autocomplete) **Required** - The database to give permmision on.
-4. Permission Scope (Options) **Required** - The scope of the permissions to give to the user. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
-* Read Only - Can run SELECT command
-* Write/Update Only - Can run INSERT/UPDATE/DELETE commands.
-* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE commands.
-* Control - Can run commands to control all data inside existing tables.
-* Alter - Can run all previous commands and all commands to alter the schema of the database, as in create new tables, editing existing tables and more.
-* Full Access - Can run all possible commands on the specified database.
+### Parameter: User
+The user to be granted the specified permissions.
 
+### Parameter: Database
+The database on which to grant permissions. Use the autocomplete to select a database.
+
+### Parameter: Permission Scope
+Grant the user this scope of permissions in the database. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
+* Read Only - Can run only SELECT queries.
+* Write/Update Only - Can run INSERT/UPDATE/DELETE queries.
+* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE queries.
+* Control - Can run queries to control all data inside existing tables.
+* Alter - Can run all previous queries and those that alter the schema of the database.
+* Full Access - Can run all queries on the specified database.
 
 ## Method: Grant Table Permissions
-Grant Table Permissions
+Grant specified permissions to an existing user over the specified table.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. User (Autocomplete) **Required** - The user to grant permission to
-3. DB (Autocomplete) **Required** - The database to select the table from.
-4. Table (Autocomplete) **Required** - The table to give permission on.
-5. Permission Scope (Options) **Required** - The scope of the permissions to give to the user.Possible values: [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
-* Read Only - Can run SELECT command
-* Write/Update Only - Can run INSERT/UPDATE/DELETE commands.
-* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE commands.
-* Full Access - Can run all possible commands on the specified table.
+### Parameter: User
+The user to be granted the specified permissions.
 
+### Parameter: Database
+The database to which the table belongs. Use the autocomplete to select a database.
+
+### Parameter: Table
+The table on which to grant permissions to the specified user.
+
+### Parameter: Permission Scope
+Grant the user this scope of permissions in the table. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
+* Read Only - Can run SELECT queries.
+* Write/Update Only - Can run INSERT/UPDATE/DELETE queries.
+* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE queries.
+* Full Access - Can run all queries on the specified table.
 
 ## Method: Create Role
-Create a new role in the connected database. Also grant permmission specified to the role.
-Runs everything in one transaction so if one command fails, no effects will take place in the DB.
+Creates a new role in the database schema.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. Role Name (String) **Required** - The name of the new role.
-3. DB Permission (Autocomplete) **Optional** - Database to give permissions on.
-4. Database Permission Scope (Options) **Optional** - If specified grant the new role the specified scope of permissions in the above database.[Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
-* Read Only - Can run SELECT command
-* Write/Update Only - Can run INSERT/UPDATE/DELETE commands.
-* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE commands.
-* Control - Can run commands to control all data inside existing tables.
-* Alter - Can run all previous commands and all commands to alter the schema of the database, as in create new tables, editing existing tables and more.
-* Full Access - Can run all possible commands on the specified database.
-5. Table Permission (Autocomplete) **Optional** - Table to give permissions on.
-6. Table Permission Scope (Options) **Optional** - If specified grant the new role the specified scope of permissions in the above table. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
-* Read Only - Can run SELECT command
-* Write/Update Only - Can run INSERT/UPDATE/DELETE commands.
-* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE commands.
-* Full Access - Can run all possible commands on the specified table.
+### Parameter: Role Name
+A name for the new role.
+
+### Parameter: Database
+The database in which to create the new role. Use the autocomplete to select a database.
+
+### Parameter: Database Permission Scope
+Grant the user this scope of permissions in the database. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
+* Read Only - Can run only SELECT queries.
+* Write/Update Only - Can run INSERT/UPDATE/DELETE queries.
+* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE queries.
+* Control - Can run queries to control all data inside existing tables.
+* Alter - Can run all previous queries and those that alter the schema of the database.
+* Full Access - Can run all queries on the specified database.
+
+### Parameter: Table
+If specified, a table on which to grant permissions. Use the autocomplete to select a table.
+
+### Parameter: Table Permission Scope
+If specified grant the user this scope of permissions in the table. [Read more here](https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks). Possible values are: 
+* Read Only - Can run SELECT queries.
+* Write/Update Only - Can run INSERT/UPDATE/DELETE queries.
+* Read And Write - Can run SELECT/INSERT/UPDATE/DELETE queries.
+* Full Access - Can run all queries on the specified table.
 
 ## Method: Add Role Member
-Add the specified user as a role member of the specified role, which gives him the same permissions as the specified role.
+Adds an existing user to an existing role. This is a way to group users by role and then assign permissions according to the roles, rather than assigning permissions directly to specific users.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. User (Autocomplete) **Required** - The user to add as role member.
-3. Role (Autocomplete) **Required** - The role to add a member to. Will grant the user all the permissions this role has.
+### Parameter: User
+The user to be added to the role.
+
+### Parameter: Role
+The role to which the user will be added.
 
 ## Method: List Databases
-List all databases.
-
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
+Lists all databases visible based on the connection credentials provided in the Kaholo Plugin Account.
 
 ## Method: List Roles
-List all roles in the connected database.
-
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
+Lists all roles visible based on the connection credentials provided in the Kaholo Plugin Account.
 
 ## Method: List Users
-List all users in the connected database.
-
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
+Lists all users visible based on the connection credentials provided in the Kaholo Plugin Account.
 
 ## Method: List Tables
-List all tables in the specifed db.
+Lists all tables visible in a database based on the connection credentials provided in the Kaholo Plugin Account.
 
-## Parameters
-1. Connection String (Vault) **Required if not in in settings** - The connection string to use to connect to the MSSQL server. Needs to follow the format 'Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;'
-2. Database (Autocomplete) **Optional** - The database to list its tables.
+### Parameter: Database
+The database for which to list tables. Select a database from the drop-down autocomplete list.

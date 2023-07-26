@@ -1,0 +1,520 @@
+{
+  "name": "MSSQL",
+  "viewName": "Microsoft SQL Server",
+  "type": "executer",
+  "imgUrl": "logo.png",
+  "execProgram": "node",
+  "main": "app.js",
+  "version": "2.0.0",
+  "description": "Microsoft-developed relational database management system",
+  "category": "Database",
+  "keywords": [
+    "relational",
+    "database",
+    "rdbms",
+    "db",
+    "sql",
+    "t-sql",
+    "transact-sql",
+    "mssql",
+    "microsoft",
+    "table",
+    "query"
+  ],
+  "auth": {
+    "authId": "mssqlAccount",
+    "params": [
+      {
+        "name": "host",
+        "viewName": "Host",
+        "type": "string",
+        "description": "Hostname or IP address of the Microsoft SQL Server",
+        "required": true,
+        "placeholder": "mssql1.msdevnet.org"
+      },
+      {
+        "name": "username",
+        "viewName": "Username",
+        "description": "to authenticate with Microsoft SQL Server",
+        "type": "string",
+        "required": true,
+        "placeholder": "DOMAIN\\username"
+      },
+      {
+        "name": "password",
+        "viewName": "Password",
+        "description": "to authenticate with Microsoft SQL Server",
+        "type": "vault"
+      },
+      {
+        "name": "additionalConnectionStringItems",
+        "viewName": "Additional Connection String Items",
+        "type": "text",
+        "description": "in key=value format, one per line",
+        "parserType": "keyValuePairs",
+        "placeholder": "Database=kaholo\nTrustServerCertificate=True"
+      }
+    ]
+  },
+  "methods": [
+    {
+      "name": "executeQuery",
+      "viewName": "Execute Query",
+      "params": [
+        {
+          "name": "query",
+          "viewName": "Query String",
+          "type": "text",
+          "description": "The SQL query to execute",
+          "required": true,
+          "placeholder": "SELECT * FROM records;"
+        }
+      ]
+    },
+    {
+      "name": "executeSQLFile",
+      "viewName": "Execute SQL File",
+      "params": [
+        {
+          "name": "path",
+          "viewName": "SQL File Path",
+          "type": "string",
+          "description": "The path on the Kaholo agent of a file containing the SQL script to execute",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "testConnectivity",
+      "viewName": "Test Connectivity",
+      "params": []
+    },
+    {
+      "name": "getTablesLocks",
+      "viewName": "Get Table Locks",
+      "params": [
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesOrAll",
+          "description": "The database from which to get table locks"
+        },
+        {
+          "name": "table",
+          "viewName": "Table",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listTablesOrAll",
+          "description": "If specified, the table for which to get table locks"
+        }
+      ]
+    },
+    {
+      "name": "getServerVersion",
+      "viewName": "Get Server Version",
+      "params": []
+    },
+    {
+      "name": "getDbSize",
+      "viewName": "Get Database Size",
+      "params": [
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesOrAll",
+          "description": "The database of which to get database size"
+        }
+      ]
+    },
+    {
+      "name": "getTablesSize",
+      "viewName": "Get Tables Size",
+      "allowEmptyResult": true,
+      "params": [
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "required": true,
+          "autocompleteType": "function",
+          "functionName": "listDatabasesAuto",
+          "description": "The database from which to get the size of tables"
+        },
+        {
+          "name": "table",
+          "viewName": "Table",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listTablesOrAll",
+          "description": "If specified, table of which to get table size"
+        }
+      ]
+    },
+    {
+      "name": "createUser",
+      "viewName": "Create User",
+      "params": [
+        {
+          "name": "user",
+          "viewName": "Username",
+          "type": "string",
+          "description": "A username to identify the new user",
+          "required": true
+        },
+        {
+          "name": "pass",
+          "viewName": "Password",
+          "type": "vault",
+          "description": "A password for the new user",
+          "required": true
+        },
+        {
+          "name": "role",
+          "viewName": "Role",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRolesAuto",
+          "description": "A role, if specified, to assign the new user",
+          "required": true
+        },
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesAuto",
+          "description": "The database on which to give the new user permissions",
+          "required": true
+        },
+        {
+          "name": "dbScope",
+          "viewName": "Database Permission Scope",
+          "type": "options",
+          "options": [
+            {
+              "id": "READ",
+              "name": "Read Only"
+            },
+            {
+              "id": "WRITE",
+              "name": "Write/Update Only"
+            },
+            {
+              "id": "READ_WRITE",
+              "name": "Read And Write"
+            },
+            {
+              "id": "CONTROL",
+              "name": "Control"
+            },
+            {
+              "id": "ALTER",
+              "name": "Alter"
+            },
+            {
+              "id": "FULL",
+              "name": "Full Access"
+            }
+          ],
+          "description": "If specified grant the new user the selected scope of permissions in the specified database.",
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
+        },
+        {
+          "name": "table",
+          "viewName": "Table",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listTablesAuto",
+          "description": "If specified, the table on which to give the new user permissions",
+          "required": true
+        },
+        {
+          "name": "tableScope",
+          "viewName": "Table Permission Scope",
+          "type": "options",
+          "options": [
+            {
+              "id": "READ",
+              "name": "Read Only"
+            },
+            {
+              "id": "WRITE",
+              "name": "Write(Insert/Update/Delete) Only"
+            },
+            {
+              "id": "READ_WRITE",
+              "name": "Read And Write"
+            },
+            {
+              "id": "FULL",
+              "name": "Full Access"
+            }
+          ],
+          "description": "If specified grant the new user the selected scope of permissions in the specified table.",
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "grantDbPermissions",
+      "viewName": "Grant Database Permissions",
+      "params": [
+        {
+          "name": "user",
+          "viewName": "User",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listUsersAuto",
+          "description": "The user to which to grant permissions",
+          "required": true
+        },
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesAuto",
+          "description": "The database in which to grant permissions",
+          "required": true
+        },
+        {
+          "name": "scope",
+          "viewName": "Permission Scope",
+          "type": "options",
+          "options": [
+            {
+              "id": "READ",
+              "name": "Read Only"
+            },
+            {
+              "id": "WRITE",
+              "name": "Write/Update Only"
+            },
+            {
+              "id": "READ_WRITE",
+              "name": "Read And Write"
+            },
+            {
+              "id": "CONTROL",
+              "name": "Control"
+            },
+            {
+              "id": "ALTER",
+              "name": "Alter"
+            },
+            {
+              "id": "FULL",
+              "name": "Full Access"
+            }
+          ],
+          "description": "The scope of the permissions to grant the user in the database",
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "grantTablePermissions",
+      "viewName": "Grant Table Permissions",
+      "params": [
+        {
+          "name": "user",
+          "viewName": "User",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listUsersAuto",
+          "description": "The user to which to grant permissions",
+          "required": true
+        },
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesAuto",
+          "description": "The database to which the table belongs",
+          "required": true
+        },
+        {
+          "name": "table",
+          "viewName": "Table",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listTablesAuto",
+          "description": "The table to which to grant the user permissions",
+          "required": true
+        },
+        {
+          "name": "scope",
+          "viewName": "Permission Scope",
+          "type": "options",
+          "options": [
+            {
+              "id": "READ",
+              "name": "Read Only"
+            },
+            {
+              "id": "WRITE",
+              "name": "Write/Update Only"
+            },
+            {
+              "id": "READ_WRITE",
+              "name": "Read And Write"
+            },
+            {
+              "id": "FULL",
+              "name": "Full Access"
+            }
+          ],
+          "description": "The scope of the permissions to grant to the user",
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "createRole",
+      "viewName": "Create Role",
+      "params": [
+        {
+          "name": "role",
+          "viewName": "Role Name",
+          "type": "string",
+          "required": true,
+          "description": "A name for the new role to be created"
+        },
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesAuto",
+          "description": "The database on which the new role grants permissions"
+        },
+        {
+          "name": "dbScope",
+          "viewName": "Database Permission Scope",
+          "type": "options",
+          "options": [
+            {
+              "id": "READ",
+              "name": "Read Only"
+            },
+            {
+              "id": "WRITE",
+              "name": "Write/Update Only"
+            },
+            {
+              "id": "READ_WRITE",
+              "name": "Read And Write"
+            },
+            {
+              "id": "CONTROL",
+              "name": "Control"
+            },
+            {
+              "id": "ALTER",
+              "name": "Alter"
+            },
+            {
+              "id": "FULL",
+              "name": "Full Access"
+            }
+          ],
+          "description": "If specified grant the new role the selected scope of permissions in the specified database.",
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks"
+        },
+        {
+          "name": "table",
+          "viewName": "Table",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listTablesAuto",
+          "description": "If specified, the table to which to grant the role permissions"
+        },
+        {
+          "name": "tableScope",
+          "viewName": "Table Permission Scope",
+          "type": "options",
+          "options": [
+            {
+              "id": "READ",
+              "name": "Read Only"
+            },
+            {
+              "id": "WRITE",
+              "name": "Write(Insert/Update/Delete) Only"
+            },
+            {
+              "id": "READ_WRITE",
+              "name": "Read And Write"
+            },
+            {
+              "id": "FULL",
+              "name": "Full Access"
+            }
+          ],
+          "description": "If specified, grant the new role the selected scope of permissions in the specified table.",
+          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks"
+        }
+      ]
+    },
+    {
+      "name": "addRoleMember",
+      "viewName": "Add Role Member",
+      "params": [
+        {
+          "name": "user",
+          "viewName": "User",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listUsersAuto",
+          "description": "The user to add as role member."
+        },
+        {
+          "name": "role",
+          "viewName": "Role",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRolesAuto",
+          "description": "The role to which the user will be added"
+        }
+      ]
+    },
+    {
+      "name": "listDbs",
+      "viewName": "List Databases",
+      "params": []
+    },
+    {
+      "name": "listRoles",
+      "viewName": "List Roles",
+      "params": []
+    },
+    {
+      "name": "listUsers",
+      "viewName": "List Users",
+      "params": []
+    },
+    {
+      "name": "listTables",
+      "viewName": "List Tables",
+      "params": [
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesOrAll",
+          "description": "The database for which all tables will be listed"
+        }
+      ]
+    }
+  ]
+}
