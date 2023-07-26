@@ -24,7 +24,7 @@
     "jest": "27.5.0"
   },
   "dependencies": {
-    "@kaholo/plugin-library": "^2.3.1",
+    "@kaholo/plugin-library": "^2.3.2",
     "mssql": "^7.2.1"
   }
 }
