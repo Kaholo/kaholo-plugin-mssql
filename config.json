@@ -133,14 +133,16 @@
     {
       "name": "getTablesSize",
       "viewName": "Get Tables Size",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "db",
           "viewName": "Database",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
-          "functionName": "listDatabasesOrAll",
-          "description": "If specified, the database from which to get the size of tables"
+          "functionName": "listDatabasesAuto",
+          "description": "The database from which to get the size of tables"
         },
         {
           "name": "table",

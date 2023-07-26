@@ -56,6 +56,7 @@ function prepareGetTablesSizeQuery(params) {
   } = params;
 
   let query = `
+USE ${db};
 SELECT 
   t.NAME AS table_name,
   s.Name AS database_name,
@@ -74,10 +75,6 @@ INNER JOIN
 LEFT OUTER JOIN 
   sys.schemas s ON t.schema_id = s.schema_id
 WHERE`;
-
-  if (db && db !== "*") {
-    query += ` s.Name = '${db}' AND`;
-  }
   if (table && table !== "*") {
     query += ` t.NAME = '${table}'`;
   } else {

@@ -64,7 +64,7 @@ To get the size of only the specified database, select a database using the drop
 Gets the size in MB of table(s) in a database.
 
 ### Parameter: Database
-If a database is already specified as part of the Additional Connection String Items in the Kaholo Plugin Account, this parameter may be left empty. Otherwise, select a database from which to get table sizes.
+Select the database from which to get table sizes.
 
 ### Parameter: Table
 To get the size of only the specified table, select a table using the drop-down autocomplete. To get the size of all tables in the database, select "All" or leave this parameter unconfigured.
