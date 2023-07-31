@@ -344,7 +344,7 @@ class MSSQLClient {
 
   async listUsers() {
     return this.executeQuery({
-      query: "SELECT name FROM sysusers;",
+      query: "SELECT name FROM sysusers WHERE issqluser = 1;",
       getRecordSet: true,
     });
   }
