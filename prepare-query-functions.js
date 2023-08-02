@@ -105,7 +105,7 @@ function prepareListTablesQuery(params) {
 }
 
 const prepareCreateRoleQuery = ({ role }) => `CREATE ROLE ${role};`;
-const prepareAddRoleMemberQuery = ({ role, user, db }) => `USE ${db}; EXEC sp_addrolemember '${role}', '${user}';`;
+const prepareAddRoleMemberQuery = ({ role, user, db }) => `USE [${db}]; EXEC sp_addrolemember '${role}', '${user}';`;
 const prepareGrantDbPermissionsQuery = ({ scope, user }) => `GRANT ${scope} TO ${user};`;
 const prepareGrantTablePermissionsQuery = ({
   scope,
@@ -120,7 +120,7 @@ const prepareCreateUserQuery = ({ user, pass, db }) => {
   ];
 
   if (db) {
-    queryPieces.unshift(`USE ${db};`);
+    queryPieces.unshift(`USE [${db}];`);
   }
 
   return queryPieces.join(" ");
