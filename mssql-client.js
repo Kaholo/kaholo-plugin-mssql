@@ -303,12 +303,11 @@ class MSSQLClient {
 
   async listDbs() {
     const result = await this.executeQuery({
-      query: "SELECT name FROM sys.databases;",
+      query: "SELECT name FROM master.dbo.sysdatabases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');",
       getRecordSet: true,
     });
 
     return [
-      { name: "dbo" },
       ...result,
     ];
   }
