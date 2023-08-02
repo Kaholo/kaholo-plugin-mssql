@@ -178,7 +178,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "The database on which to give the new user permissions"
+          "description": "The database on which to give the new user permissions. Default is set to 'master'."
         },
         {
           "name": "role",
@@ -186,7 +186,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRolesAuto",
-          "description": "A role, if specified, to assign the new user"
+          "description": "A role to assign the new user in scope of the selected database."
         }
       ]
     },
