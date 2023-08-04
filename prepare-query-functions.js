@@ -105,8 +105,7 @@ function prepareListTablesQuery(params) {
 }
 
 const prepareCreateRoleQuery = ({ role }) => `CREATE ROLE ${role};`;
-const prepareCreateUserQuery = ({ user, pass }) => `CREATE LOGIN ${user} WITH PASSWORD = '${pass}'; CREATE USER ${user} FOR LOGIN ${user};`;
-const prepareAddRoleMemberQuery = ({ role, user }) => `EXEC sp_addrolemember '${role}', '${user}';`;
+const prepareAddRoleMemberQuery = ({ role, user, db }) => `USE [${db}]; EXEC sp_addrolemember '${role}', '${user}';`;
 const prepareGrantDbPermissionsQuery = ({ scope, user }) => `GRANT ${scope} TO ${user};`;
 const prepareGrantTablePermissionsQuery = ({
   scope,
@@ -114,6 +113,18 @@ const prepareGrantTablePermissionsQuery = ({
   table,
   user,
 }) => `GRANT ${scope} ON ${db}.${table} TO ${user};`;
+const prepareCreateUserQuery = ({ user, pass, db }) => {
+  const queryPieces = [
+    `CREATE LOGIN ${user} WITH PASSWORD = '${pass}';`,
+    `CREATE USER ${user} FOR LOGIN ${user};`,
+  ];
+
+  if (db) {
+    queryPieces.unshift(`USE [${db}];`);
+  }
+
+  return queryPieces.join(" ");
+};
 
 module.exports = {
   prepareGetTablesLocksQuery,

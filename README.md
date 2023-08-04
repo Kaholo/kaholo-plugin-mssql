@@ -70,7 +70,7 @@ Select the database from which to get table sizes.
 To get the size of only the specified table, select a table using the drop-down autocomplete. To get the size of all tables in the database, select "All" or leave this parameter unconfigured.
 
 ## Method: Create User
-Creates a new User account. If provided a role or DB\Table Permission Scope, the method also give the user the specified permissions and role. The method runs as a single transaction so if any part fails, no changes take effect.
+Create SQL Server Authenticated User with Login. It does not create Windows authenticated users or those without login or new users for existing logins. If provided a role the method also gives the user the specified role. The method runs as a single transaction so if any part fails, no changes take effect.
 
 ### Parameter: Username
 The name of the user to create.
