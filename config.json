@@ -5,7 +5,7 @@
   "imgUrl": "logo.png",
   "execProgram": "node",
   "main": "app.js",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Microsoft-developed relational database management system",
   "category": "Database",
   "keywords": [
@@ -173,91 +173,20 @@
           "required": true
         },
         {
-          "name": "role",
-          "viewName": "Role",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRolesAuto",
-          "description": "A role, if specified, to assign the new user",
-          "required": true
-        },
-        {
           "name": "db",
           "viewName": "Database",
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listDatabasesAuto",
-          "description": "The database on which to give the new user permissions",
-          "required": true
+          "description": "The database on which to give the new user permissions. Default is set to 'master'."
         },
         {
-          "name": "dbScope",
-          "viewName": "Database Permission Scope",
-          "type": "options",
-          "options": [
-            {
-              "id": "READ",
-              "name": "Read Only"
-            },
-            {
-              "id": "WRITE",
-              "name": "Write/Update Only"
-            },
-            {
-              "id": "READ_WRITE",
-              "name": "Read And Write"
-            },
-            {
-              "id": "CONTROL",
-              "name": "Control"
-            },
-            {
-              "id": "ALTER",
-              "name": "Alter"
-            },
-            {
-              "id": "FULL",
-              "name": "Full Access"
-            }
-          ],
-          "description": "If specified grant the new user the selected scope of permissions in the specified database.",
-          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-database-permissions-transact-sql?view=sql-server-ver15#remarks",
-          "required": true
-        },
-        {
-          "name": "table",
-          "viewName": "Table",
+          "name": "role",
+          "viewName": "Database Role",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "listTablesAuto",
-          "description": "If specified, the table on which to give the new user permissions",
-          "required": true
-        },
-        {
-          "name": "tableScope",
-          "viewName": "Table Permission Scope",
-          "type": "options",
-          "options": [
-            {
-              "id": "READ",
-              "name": "Read Only"
-            },
-            {
-              "id": "WRITE",
-              "name": "Write(Insert/Update/Delete) Only"
-            },
-            {
-              "id": "READ_WRITE",
-              "name": "Read And Write"
-            },
-            {
-              "id": "FULL",
-              "name": "Full Access"
-            }
-          ],
-          "description": "If specified grant the new user the selected scope of permissions in the specified table.",
-          "learnUrl": "https://docs.microsoft.com/en-us/sql/t-sql/statements/grant-object-permissions-transact-sql?view=sql-server-ver15#remarks",
-          "required": true
+          "functionName": "listRolesAuto",
+          "description": "A role to assign the new user in scope of the selected database."
         }
       ]
     },
@@ -484,6 +413,14 @@
           "autocompleteType": "function",
           "functionName": "listRolesAuto",
           "description": "The role to which the user will be added"
+        },
+        {
+          "name": "db",
+          "viewName": "Database",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listDatabasesAuto",
+          "description": "The database on which the new role grants permissions"
         }
       ]
     },

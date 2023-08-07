@@ -146,18 +146,13 @@ class MSSQLClient {
       pass,
       role,
       db,
-      table,
-      dbScope,
-      tableScope,
     } = params;
 
-    const query = prepareCreateUserQuery({ pass, user });
+    const query = prepareCreateUserQuery({ pass, user, db });
 
     const result = {
       createUser: null,
       addRole: null,
-      grantDbPermissions: null,
-      grantTablePermissions: null,
     };
 
     await this.startTransaction();
@@ -168,31 +163,13 @@ class MSSQLClient {
         dontClose: true,
       }).catch(createRethrowerWithActionName("createUser"));
 
-      if (role) {
+      if (role && db) {
         result.addRole = await this.addRoleMember({
           user,
           role,
+          db,
           dontClose: true,
         }).catch(createRethrowerWithActionName("addRole"));
-      }
-
-      if (dbScope) {
-        result.grantDbPermissions = await this.grantDbPermissions({
-          user,
-          db,
-          scope: dbScope,
-          dontClose: true,
-        }).catch(createRethrowerWithActionName("grantDbPermissions"));
-      }
-
-      if (tableScope) {
-        result.grantTablePermissions = await this.grantTablePermissions({
-          user,
-          db,
-          table,
-          scope: tableScope,
-          dontClose: true,
-        }).catch(createRethrowerWithActionName("grantTablePermissions"));
       }
 
       await this.commitTransaction().catch(createRethrowerWithActionName("commitTransaction"));
@@ -211,12 +188,13 @@ class MSSQLClient {
 
   async addRoleMember(params) {
     const {
+      db,
       user,
       role,
       dontClose,
     } = params;
 
-    const query = prepareAddRoleMemberQuery({ user, role });
+    const query = prepareAddRoleMemberQuery({ user, role, db });
 
     return this.executeQuery({
       query,
@@ -325,12 +303,11 @@ class MSSQLClient {
 
   async listDbs() {
     const result = await this.executeQuery({
-      query: "SELECT name FROM sys.databases;",
+      query: "SELECT name FROM master.dbo.sysdatabases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');",
       getRecordSet: true,
     });
 
     return [
-      { name: "dbo" },
       ...result,
     ];
   }
@@ -344,7 +321,7 @@ class MSSQLClient {
 
   async listUsers() {
     return this.executeQuery({
-      query: "SELECT name FROM sysusers;",
+      query: "SELECT name FROM sysusers WHERE issqluser = 1;",
       getRecordSet: true,
     });
   }
